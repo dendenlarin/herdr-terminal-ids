@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src=".github/logo.svg" alt="" width="80">
+
 # Terminal IDs for Herdr
 
-**See and copy terminal IDs in your panes and agent list.**
+**The right terminal, one click away.**
 
 [![Herdr mod](https://img.shields.io/badge/Herdr-mod-5b7cfa)](https://herdr.dev/mods)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-lightgrey)](LICENSE)
@@ -11,7 +13,11 @@
 
 </div>
 
-One mod, two places to find the terminal you need:
+A mod for [Herdr](https://herdr.dev), the desktop app for running coding agents side by side. See which terminal belongs to each agent and copy its address to point another agent at it.
+
+No hooks, no setup scripts — one mod for your pane headers and agent list.
+
+## How it works
 
 - **Agent list:** workspace and clickable terminal ID on the first line; tab title, age and status below. Sub-agents show their IDs too.
 - **Pane header:** clickable terminal ID beside the program and folder, with the usual split, zoom and close controls.
@@ -20,7 +26,9 @@ Click an ID to copy it and see **Address copied**. An ID such as `t51` identifie
 
 ## Install
 
-Built against Herdr 0.1.13. Ask your agent:
+Built against Herdr 0.1.13.
+
+Ask the agent running in Herdr:
 
 ```text
 Read ~/.config/herdr-app/AGENTS.md, then install
@@ -28,7 +36,12 @@ https://github.com/dendenlarin/herdr-terminal-ids using its RECIPE.md.
 Preserve my existing layout and panels.
 ```
 
-Or copy `mods/terminal-ids/` into your app home's `mods/` directory (default `~/.config/herdr-app`, or `$HERDR_APP_HOME`). Back up any existing copy; write `mod.json` before `main.js` to prevent automatic docking.
+It adds the sidebar and pane header views to your personal layout, preserving your other panels.
+
+<details>
+<summary>By hand</summary>
+
+Copy `mods/terminal-ids/` into your app home's `mods/` directory (default `~/.config/herdr-app`, or `$HERDR_APP_HOME`). Back up any existing copy; write `mod.json` before `main.js` to prevent automatic docking.
 
 Edit a personal layout. If yours is shipped, clone it first (this switches to the copy):
 
@@ -60,21 +73,34 @@ herdr-app check ~/.config/herdr-app/mods/terminal-ids
 herdr-app status
 ```
 
-No hooks, build step, network requests or background process. Uses Herdr's built-in icons and live data. Sorting, pins, focus, sub-agent folding and the narrow sidebar rail retain the standard behavior. Clicking an ID does not select another agent.
+</details>
+
+## What it touches
+
+- **Reads** Herdr's live agents, terminals, panes and workspace names.
+- **Writes to the clipboard** when you click an address; shows an **Address copied** notification.
+- **Stores** status-age tracking and legacy pin migration state in Herdr's per-mod local storage. Sorting and sidebar settings use Herdr's shared state.
+- **Changes your personal layout** during installation to add the two views.
+- No network requests, external programs or agent hooks.
 
 ## Upgrade from Pane Info
 
 Install `terminal-ids` first. Replace `agents-address` references with `terminal-ids` and add `props.role: "agents"`. Replace `pane-address` references with `terminal-ids` and add `props.role: "pane"`. Preserve other props and layout fields. After checking the new layout, remove old mod folders only if no layouts reference them. Sidebar state-age tracking starts fresh after migration.
 
-## Remove
+## Uninstall
 
 Restore the sidebar block to `agents` and the pane header to its previous configuration (usually `pane`), including its previous `lone` setting. Remove `mods/terminal-ids/` once no layouts reference it.
+
+## Good to know
+
+- IDs identify terminals, not agent conversation sessions. This mod does not resume conversations.
+- Sorting, pins, focus, sub-agent folding and the narrow sidebar rail follow Herdr's agents list.
+- Clicking an ID copies it without selecting a different agent.
+- The views derive from Herdr 0.1.13's shipped mods and need manual review when those upstream mods change.
 
 ## Development
 
 `main.js` selects the view from `props.role`; `agents.js` and `pane.js` implement the two views. The sort popup uses the agents role too. Run `herdr-app check mods/terminal-ids`, then inspect both placements in a personal layout, including the sort menu and ID copying. The check renders only the initial state; it does not simulate clicks. Check live errors with `herdr-app status` and inspect a `herdr-app shot` screenshot.
-
-The views derive from Herdr 0.1.13's shipped mods and need manual review when those upstream mods change.
 
 ## License and credits
 
