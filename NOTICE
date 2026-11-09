@@ -1,0 +1,13 @@
+Terminal IDs for Herdr
+Copyright 2026 dendenlarin
+
+Derived from the agents and pane interface mods distributed with Herdr 0.1.13.
+Upstream: https://github.com/herdrdev/herdr-app
+Upstream code is licensed under Apache License 2.0.
+
+Modified files: agents.js (two-line rows and copyable terminal addresses),
+pane.js (copyable terminal addresses and local asset paths).
+The unified entry point and documentation are additions by this project.
+
+Original code and modifications by dendenlarin are also licensed under Apache-2.0.
+See LICENSE and THIRD-PARTY-NOTICES for the applicable terms.
