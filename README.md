@@ -79,7 +79,7 @@ herdr-app status
 
 - **Reads** Herdr's live agents, terminals, panes and workspace names.
 - **Writes to the clipboard** when you click an address; shows an **Address copied** notification.
-- **Stores** status-age tracking and legacy pin migration state in Herdr's per-mod local storage. Sorting and sidebar settings use Herdr's shared state.
+- **Stores** status-age tracking in Herdr's per-mod local storage. Sorting and sidebar settings use Herdr's shared state.
 - **Changes your personal layout** during installation to add the two views.
 - No network requests, external programs or agent hooks.
 
