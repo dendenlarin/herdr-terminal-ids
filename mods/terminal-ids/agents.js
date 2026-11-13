@@ -81,10 +81,8 @@ export default class Agents extends View {
     if (props()?.sortMenu) return;
     this.folded = new Set();
     // Each agent's last state and when it changed (ms), kept across restarts.
-    this.changed = JSON.parse(localStorage.getItem("changed") ?? "{}");
-    this.pendingPins = JSON.parse(localStorage.getItem("pins") ?? "[]");
-    if (!this.pendingPins.length) localStorage.removeItem("pins");
-    this.migratingPins = new Set();
+    // A damaged store must not take the whole list down: start the ages afresh.
+    try { this.changed = JSON.parse(localStorage.getItem("changed") ?? "{}") ?? {}; } catch { this.changed = {}; }
     cx.timer.every(30000, (cx) => cx.notify());
   }
 
@@ -103,26 +101,6 @@ export default class Agents extends View {
     const listed = new Set(list.map((a) => a.address));
     for (const [k, c] of Object.entries(this.changed)) if (!listed.has(k) && now - c.at > 30 * 86400000) delete this.changed[k];
     localStorage.setItem("changed", JSON.stringify(this.changed));
-  }
-
-  // Keep offline pins until their terminal returns, and keep each pending until
-  // core echoes the label so a failed write doesn't erase the old pin.
-  migratePins(all) {
-    const listed = new Map(all.filter((t) => t.state === "live").map((t) => [t.address, t]));
-    const pending = this.pendingPins.filter((address) => {
-      const terminal = listed.get(address);
-      if (!terminal) return true;
-      if (terminal.labels?.["herdr.pinned"]) return false;
-      if (!this.migratingPins.has(address)) {
-        this.migratingPins.add(address);
-        run("terminal.pin", { terminal: address, pinned: true });
-      }
-      return true;
-    });
-    if (pending.length === this.pendingPins.length) return;
-    this.pendingPins = pending;
-    if (pending.length) localStorage.setItem("pins", JSON.stringify(pending));
-    else localStorage.removeItem("pins");
   }
 
   since(a) {
@@ -244,7 +222,6 @@ export default class Agents extends View {
     let list = agents();
     this.listed = new Map(list.map((a) => [a.address, a.status]));
     const all = terminals();
-    this.migratePins(all);
     const shown = focused()?.agent;
     const now = Date.now();
     this.track(list, now);
